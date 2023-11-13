@@ -34,8 +34,11 @@ process.load('GeneratorInterface.Core.genFilterSummary_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
+# change the seed for each submission
+process.RandomNumberGeneratorService.generator.initialSeed = int(options.randseed)
+
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(50)
+    input = cms.untracked.int32(options.maxEvents)
 )
 
 # Input source
@@ -47,7 +50,7 @@ process.options = cms.untracked.PSet(
 
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
-    annotation = cms.untracked.string('Configuration/GenProduction/python/gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250-fragment.py nevts:50'),
+    annotation = cms.untracked.string('Configuration/GenProduction/python/gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250-fragment.py nevts:'+str(options.maxEvents)),
     name = cms.untracked.string('Applications'),
     version = cms.untracked.string('$Revision: 1.19 $')
 )
@@ -162,7 +165,7 @@ process.generator = cms.EDFilter("Pythia8HadronizerFilter",
 
 process.externalLHEProducer = cms.EDProducer("ExternalLHEProducer",
     args = cms.vstring('/data_CMS/cms/vernazza/MCProduction/2023_11_09/CMSSW_10_6_37/src/Configuration/MyPrivateGridpacks/gg_H_quark-mass-effects_slc7_amd64_gcc700_CMSSW_10_6_37_my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250.tgz'),
-    nEvents = cms.untracked.uint32(50),
+    nEvents = cms.untracked.uint32(options.maxEvents),
     numberOfParameters = cms.uint32(1),
     outputFile = cms.string('cmsgrid_final.lhe'),
     scriptName = cms.FileInPath('GeneratorInterface/LHEInterface/data/run_generic_tarball_cvmfs.sh')

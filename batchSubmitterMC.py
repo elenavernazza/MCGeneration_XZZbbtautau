@@ -1,4 +1,4 @@
-import os, glob
+import os, glob, sys
 from datetime import datetime
 from optparse import OptionParser
 
@@ -7,7 +7,11 @@ from optparse import OptionParser
 '''
 python3 batchSubmitterMC.py --step 0 --cfg gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_0_cfg.py --cmssw /data_CMS/cms/vernazza/MCProduction/2023_11_14/CMSSW_10_6_18 \
 --base /data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250 \
---maxEvents 10000 --nJobs 20 --start_from 0 --queue short --no_exec
+--maxEvents 5000 --nJobs 20 --start_from 0 --queue long --no_exec
+
+python3 batchSubmitterMC.py --step 0 --cfg gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_NW_0_cfg.py --cmssw /data_CMS/cms/vernazza/MCProduction/2023_11_14/CMSSW_10_6_18 \
+--base /data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_NW \
+--maxEvents 5000 --nJobs 20 --start_from 0 --queue long --no_exec
 '''
 
 if __name__ == "__main__" :
@@ -29,17 +33,23 @@ if __name__ == "__main__" :
     print(" ### INFO: Saving output in", outdir)
     os.system('mkdir -p '+outdir)
 
+    if int(options.step) > 0:
+        prev_outdir = options.base + "/Step" + str(int(options.step) - 1)
+        print(" ### INFO: Previous step folder", prev_outdir)
+
     resubmitting = 0
 
     starting_index = int(options.start_from)
     ending_index = starting_index + int(options.nJobs)
     print(" ### INFO: Index range", starting_index, ending_index)
+    os.system('mkdir -p '+outdir+'/jobs')
     for idx in range(starting_index, ending_index):
 
-        os.system('mkdir -p '+outdir+'/jobs')
-        outJobName  = outdir + '/jobs/job_' + str(idx) + '.sh'
-        outLogName  = outdir + '/jobs/log_' + str(idx) + '.txt'
+        os.system('mkdir -p '+outdir+'/jobs/' + str(idx))
+        outJobName  = outdir + '/jobs/' + str(idx) + '/job_' + str(idx) + '.sh'
+        outLogName  = outdir + '/jobs/' + str(idx) + '/log_' + str(idx) + '.txt'
         outRootName = outdir + '/Ntuple_' + str(idx) + '.root'
+        if int(options.step) > 0: inRootName = prev_outdir + '/Ntuple_' + str(idx) + '_numEvent' + str(options.maxEvents) + '.root'
 
         # random seed for MC production should every time we submit a new generation
         # it's obtained by summing current Y+M+D+H+M+S+job_number
@@ -48,11 +58,12 @@ if __name__ == "__main__" :
         randseed = idx+1 # to be reproducible
 
         if options.resubmit:
-            ListErrJobName = glob.glob(outdir + '/jobs/job_' + str(idx) + '.sh.e*')
-            ListOutJobName = glob.glob(outdir + '/jobs/job_' + str(idx) + '.sh.o*')
+            LogJobName = outdir + '/jobs/' + str(idx) + '/log_' + str(idx) + '.txt'
+            ListErrJobName = glob.glob(outdir + '/jobs/' + str(idx) + '/job_' + str(idx) + '.sh.e*')
+            ListOutJobName = glob.glob(outdir + '/jobs/' + str(idx) + '/job_' + str(idx) + '.sh.o*')
             if len(ListErrJobName) > 0:
-                if len(os.popen('grep "No such file or directory" '+ListErrJobName[-1]).read()) > 0:
-                    print('resubmitting')
+                if len(os.popen('grep "Begin Fatal Exception" '+LogJobName).read()) > 0:
+                    print(' ### INFO: Resubmitting job ' + str(idx))
                     if not options.no_exec:
                         os.system('rm '+ListErrJobName[-1])
                         os.system('rm '+ListOutJobName[-1])
@@ -62,20 +73,20 @@ if __name__ == "__main__" :
             else:
                 continue
 
-        cmsRun = "cmsRun " + options.cfg + " outputFile=file:"+outRootName
+        cmsRun = "cmsRun " + os.getcwd() + "/" + options.cfg + " outputFile=file:"+outRootName
         cmsRun = cmsRun+" maxEvents="+str(options.maxEvents)+" randseed="+str(randseed)
+        if int(options.step) > 0: 
+            cmsRun = cmsRun+" inputFiles=file:"+inRootName
         cmsRun = cmsRun+" >& "+outLogName
-
-        print(cmsRun)
 
         skimjob = open (outJobName, 'w')
         skimjob.write ('#!/bin/bash\n')
         skimjob.write ('export X509_USER_PROXY=~/.t3/proxy.cert\n')
         skimjob.write ('source /cvmfs/cms.cern.ch/cmsset_default.sh\n')
-        skimjob.write ('cd %s\n' %options.cmssw)
+        skimjob.write ('cd %s/src\n' %options.cmssw)
         skimjob.write ('cmsenv\n')
         skimjob.write ('eval `scram r -sh`\n')
-        skimjob.write ('cd %s\n' %os.getcwd())
+        skimjob.write ('cd %s\n' %(outdir + '/jobs/' + str(idx)))
         skimjob.write (cmsRun+'\n')
         skimjob.close ()
 
