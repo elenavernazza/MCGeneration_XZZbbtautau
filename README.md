@@ -188,7 +188,112 @@ cmsRun <name>_Step1_cfg.py
 ```
 
 <details>
-<summary>My private steps</summary>
+<summary>My merged private steps 2018</summary>
+
+**Prepare fragment**
+```
+cmsrel CMSSW_10_6_18
+cd CMSSW_10_6_18/src
+cmsenv
+mkdir -p Configuration/GenProduction/python/
+touch Configuration/GenProduction/python/gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250-fragment.py
+scram b
+```
+
+**Step 0**
+```
+cmsrel CMSSW_10_6_18
+cd CMSSW_10_6_18/src
+cmsenv
+
+cmsDriver.py Configuration/GenProduction/python/gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250-fragment.py \
+ --python_filename gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_0_cfg.py --eventcontent RAWSIM,LHE \
+ --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN,LHE \
+ --fileout file:TestOut.root \
+ --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision \
+ --step LHE,GEN --geometry DB:Extended \
+ --era Run2_2018 --no_exec --mc -n 50
+
+cmsRun gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_0_cfg.py
+```
+
+**Step 1**
+```
+cmsrel CMSSW_10_6_17_patch1
+cd CMSSW_10_6_17_patch1/src
+cmsenv
+
+cmsDriver.py step1 --python_filename gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_1_cfg.py \
+ --fileout file:TestOut.root \
+ --eventcontent RAWSIM --datatier GEN-SIM-DIGI \
+ --pileup_input dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX \
+ --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision \
+ --step SIM,DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 \
+ --nThreads 8 --geometry DB:Extended \
+ --filein file:TestIn.root \
+ --datamix PreMix \
+ --era Run2_2018 --runUnscheduled --no_exec --mc -n 50
+
+cmsRun gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_1_cfg.py
+```
+
+**Step 2**
+```
+cmsrel CMSSW_10_2_16_UL
+cd CMSSW_10_2_16_UL/src
+cmsenv
+
+cmsDriver.py step2 --python_filename gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_2_cfg.py \
+ --fileout file:TestOut.root \
+ --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW \
+ --conditions 102X_upgrade2018_realistic_v15 --customise_commands "process.source.bypassVersionCheck = cms.untracked.bool(True)" \
+ --step HLT:2018v32 \
+ --nThreads 8 --geometry DB:Extended \
+ --filein file:TestIn.root \
+ --era Run2_2018 --no_exec --mc -n 50
+
+cmsRun gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_2_cfg.py
+```
+
+**Step 3**
+```
+cmsrel CMSSW_10_6_17_patch1
+cd CMSSW_10_6_17_patch1/src
+cmsenv
+
+cmsDriver.py step3 --python_filename gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_3_cfg.py \
+ --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM-MINIAODSIM \
+ --fileout file:TestOut.root \
+ --conditions 106X_upgrade2018_realistic_v11_L1v1 \
+ --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI,PAT \
+ --nThreads 8 --geometry DB:Extended \
+ --filein file:TestIn.root \
+ --era Run2_2018 --runUnscheduled --no_exec --mc -n 5
+
+cmsRun gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_3_cfg.py
+```
+
+**Step 4**
+```
+cmsrel CMSSW_10_6_19_patch2
+cd CMSSW_10_6_19_patch2/src
+cmsenv
+
+cmsDriver.py step4 --python_filename gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_4_cfg.py \
+ --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM \
+ --fileout file:TestOut.root \
+ --conditions 106X_upgrade2018_realistic_v15_L1v1 \
+ --step NANO --nThreads 8 \
+ --filein file:TestIn.root \
+ --era Run2_2018,run2_nanoAOD_106Xv1 --no_exec --mc -n 50
+
+cmsRun gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_4_cfg.py
+```
+
+</details>
+
+<details>
+<summary>My original private steps 2018</summary>
 
 **Prepare fragment**
 ```
@@ -269,11 +374,11 @@ cmsRun gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_5_cfg.py
 
 **Step 6**
 ```
-cmsrel CMSSW_10_6_5
-cd CMSSW_10_6_5/src
+cmsrel CMSSW_10_6_19_patch2
+cd CMSSW_10_6_19_patch2/src
 cmsenv
 
-cmsDriver.py step6 --python_filename gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_6_cfg.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:/data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/Step6/gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_NANOAOD.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step NANO --nThreads 8 --filein file:/data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/Step5/gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_MINI.root --era Run2_2018 --no_exec --mc -n 50
+cmsDriver.py step6 --python_filename gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_6_cfg.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:/data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/Step6/gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_NANOAODv2.root --conditions 106X_upgrade2018_realistic_v15_L1v1 --step NANO --nThreads 8 --filein file:/data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/Step5/gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_MINI.root --era Run2_2018,run2_nanoAOD_106Xv1 --no_exec --mc -n 50
 
 cmsRun gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_6_cfg.py
 ```

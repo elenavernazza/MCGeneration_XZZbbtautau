@@ -2,13 +2,14 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: Configuration/GenProduction/python/gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_NW-fragment.py --python_filename gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_NW_0_cfg.py --eventcontent RAWSIM,LHE --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN,LHE --fileout file:/data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/Step0/gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_LHEGEN.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step LHE,GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 50
+# with command line options: Configuration/GenProduction/python/gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M*_NW-fragment.py --python_filename gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_NW_0_cfg.py --eventcontent RAWSIM,LHE --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN,LHE --fileout file:FileOut.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step LHE,GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 50
 import FWCore.ParameterSet.Config as cms
 import FWCore.ParameterSet.VarParsing as VarParsing
 
 from Configuration.Eras.Era_Run2_2018_cff import Run2_2018
 
 options = VarParsing.VarParsing ('analysis')
+options.inputFiles = ''
 options.outputFile = ''
 options.maxEvents = -1
 options.register ('randseed',
@@ -50,7 +51,7 @@ process.options = cms.untracked.PSet(
 
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
-    annotation = cms.untracked.string('Configuration/GenProduction/python/gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_NW-fragment.py nevts:'+str(options.maxEvents)),
+    annotation = cms.untracked.string('Configuration/GenProduction/python/gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M*_NW-fragment.py nevts:'+str(options.maxEvents)),
     name = cms.untracked.string('Applications'),
     version = cms.untracked.string('$Revision: 1.19 $')
 )
@@ -164,7 +165,7 @@ process.generator = cms.EDFilter("Pythia8HadronizerFilter",
 
 
 process.externalLHEProducer = cms.EDProducer("ExternalLHEProducer",
-    args = cms.vstring('/data_CMS/cms/vernazza/MCProduction/2023_11_09/CMSSW_10_6_37/src/Configuration/MyPrivateGridpacks/gg_H_quark-mass-effects_slc7_amd64_gcc700_CMSSW_10_6_37_my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250.tgz'),
+    args = cms.vstring(options.inputFiles),
     nEvents = cms.untracked.uint32(options.maxEvents),
     numberOfParameters = cms.uint32(1),
     outputFile = cms.string('cmsgrid_final.lhe'),

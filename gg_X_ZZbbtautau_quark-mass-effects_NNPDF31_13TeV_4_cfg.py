@@ -2,12 +2,12 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: step6 --python_filename gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_6_cfg.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:/data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/Step6/gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_NANOAODv9.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step NANO --nThreads 2 --filein file:/data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/Step5/gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_MINI.root --era Run2_2018,run2_nanoAOD_106Xv2 --no_exec --mc -n 50
+# with command line options: step6 --python_filename gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_6_cfg.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:/data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/Step6/gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_NANOAODv2.root --conditions 106X_upgrade2018_realistic_v15_L1v1 --step NANO --nThreads 8 --filein file:/data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/Step5/gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_MINI.root --era Run2_2018,run2_nanoAOD_106Xv1 --no_exec --mc -n 50
 import FWCore.ParameterSet.Config as cms
 import FWCore.ParameterSet.VarParsing as VarParsing
 
 from Configuration.Eras.Era_Run2_2018_cff import Run2_2018
-from Configuration.Eras.Modifier_run2_nanoAOD_106Xv2_cff import run2_nanoAOD_106Xv2
+from Configuration.Eras.Modifier_run2_nanoAOD_106Xv1_cff import run2_nanoAOD_106Xv1
 
 options = VarParsing.VarParsing ('analysis')
 options.inputFiles = ''
@@ -20,7 +20,7 @@ options.register ('randseed',
                   "which seed to use?")
 options.parseArguments()
 
-process = cms.Process('NANO',Run2_2018,run2_nanoAOD_106Xv2)
+process = cms.Process('NANO',Run2_2018,run2_nanoAOD_106Xv1)
 
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
@@ -75,7 +75,7 @@ process.NANOAODSIMoutput = cms.OutputModule("NanoAODOutputModule",
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, '106X_upgrade2018_realistic_v16_L1v1', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '106X_upgrade2018_realistic_v15_L1v1', '')
 
 # Path and EndPath definitions
 process.nanoAOD_step = cms.Path(process.nanoSequenceMC)
@@ -88,7 +88,7 @@ from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
 associatePatAlgosToolsTask(process)
 
 #Setup FWK for multithreaded
-process.options.numberOfThreads=cms.untracked.uint32(2)
+process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 process.options.numberOfConcurrentLuminosityBlocks=cms.untracked.uint32(1)
 

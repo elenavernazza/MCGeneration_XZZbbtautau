@@ -4,16 +4,6 @@ from optparse import OptionParser
 
 # Script to submit MC production
 
-'''
-python3 batchSubmitterMC.py --step 0 --cfg gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_0_cfg.py --cmssw /data_CMS/cms/vernazza/MCProduction/2023_11_14/CMSSW_10_6_18 \
---base /data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250 \
---maxEvents 5000 --nJobs 20 --start_from 0 --queue long --no_exec
-
-python3 batchSubmitterMC.py --step 0 --cfg gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_NW_0_cfg.py --cmssw /data_CMS/cms/vernazza/MCProduction/2023_11_14/CMSSW_10_6_18 \
---base /data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M250_NW \
---maxEvents 5000 --nJobs 20 --start_from 0 --queue long --no_exec
-'''
-
 if __name__ == "__main__" :
 
     parser = OptionParser()    
@@ -21,6 +11,7 @@ if __name__ == "__main__" :
     parser.add_option("--cfg",       dest="cfg",       type=str,            default="Step_0_cfg.py",                 help="Config file")
     parser.add_option("--cmssw",     dest="cmssw",     type=str,            default="./CMSSW_10_6_18",               help="Path to CMSSW release")
     parser.add_option("--base",      dest="base",      type=str,            default=None,                            help="Base output folder name")
+    parser.add_option("--grid",      dest="grid",      type=str,            default=None,                            help="Gridpack location for step 0")
     parser.add_option("--maxEvents", dest="maxEvents", type=int,            default=50,                              help="Number of events per job")
     parser.add_option("--nJobs",     dest="nJobs",     type=int,            default=1,                               help="Number of jobs")
     parser.add_option("--start_from",dest="start_from",type=int,            default=0,                               help="Start random seed from")
@@ -32,6 +23,11 @@ if __name__ == "__main__" :
     outdir = options.base + "/Step" + options.step
     print(" ### INFO: Saving output in", outdir)
     os.system('mkdir -p '+outdir)
+
+    if int(options.step) == 0:
+        if options.grid == None:
+            sys.exit(" ### ERROR: Specify gridpack location")
+        print(" ### INFO: Gridpack location is", options.grid)
 
     if int(options.step) > 0:
         prev_outdir = options.base + "/Step" + str(int(options.step) - 1)
@@ -62,7 +58,9 @@ if __name__ == "__main__" :
             ListErrJobName = glob.glob(outdir + '/jobs/' + str(idx) + '/job_' + str(idx) + '.sh.e*')
             ListOutJobName = glob.glob(outdir + '/jobs/' + str(idx) + '/job_' + str(idx) + '.sh.o*')
             if len(ListErrJobName) > 0:
-                if len(os.popen('grep "Begin Fatal Exception" '+LogJobName).read()) > 0:
+                if len(os.popen('grep "Begin Fatal Exception" '+LogJobName).read()) > 0 or len(open(ListErrJobName[0]).readlines()) > 0:
+                    if len(open(ListErrJobName[0]).readlines()) > 0:
+                        print(' ### INFO: Job failed due to error\n', open(ListErrJobName[0]).readlines(), '\n')
                     print(' ### INFO: Resubmitting job ' + str(idx))
                     if not options.no_exec:
                         os.system('rm '+ListErrJobName[-1])
@@ -75,6 +73,8 @@ if __name__ == "__main__" :
 
         cmsRun = "cmsRun " + os.getcwd() + "/" + options.cfg + " outputFile=file:"+outRootName
         cmsRun = cmsRun+" maxEvents="+str(options.maxEvents)+" randseed="+str(randseed)
+        if int(options.step) == 0:
+            cmsRun = cmsRun+" inputFiles="+options.grid
         if int(options.step) > 0: 
             cmsRun = cmsRun+" inputFiles=file:"+inRootName
         cmsRun = cmsRun+" >& "+outLogName
