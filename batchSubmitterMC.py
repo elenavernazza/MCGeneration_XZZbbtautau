@@ -33,7 +33,9 @@ if __name__ == "__main__" :
         prev_outdir = options.base + "/Step" + str(int(options.step) - 1)
         print(" ### INFO: Previous step folder", prev_outdir)
 
-    resubmitting = 0
+    resubmitting = []
+    done = []
+    running = []
 
     starting_index = int(options.start_from)
     ending_index = starting_index + int(options.nJobs)
@@ -57,19 +59,26 @@ if __name__ == "__main__" :
             LogJobName = outdir + '/jobs/' + str(idx) + '/log_' + str(idx) + '.txt'
             ListErrJobName = glob.glob(outdir + '/jobs/' + str(idx) + '/job_' + str(idx) + '.sh.e*')
             ListOutJobName = glob.glob(outdir + '/jobs/' + str(idx) + '/job_' + str(idx) + '.sh.o*')
-            if len(ListErrJobName) > 0:
-                if len(os.popen('grep "Begin Fatal Exception" '+LogJobName).read()) > 0 or len(open(ListErrJobName[0]).readlines()) > 0:
-                    if len(open(ListErrJobName[0]).readlines()) > 0:
-                        print(' ### INFO: Job failed due to error\n', open(ListErrJobName[0]).readlines(), '\n')
-                    print(' ### INFO: Resubmitting job ' + str(idx))
-                    if not options.no_exec:
-                        os.system('rm '+ListErrJobName[-1])
-                        os.system('rm '+ListOutJobName[-1])
-                    resubmitting = resubmitting + 1
-                else:
+            if os.path.isfile(LogJobName):
+                if len(os.popen('tail '+LogJobName+' | grep dropped').read()) > 0 or len(os.popen('grep "2000th" '+LogJobName).read()) > 0:
+                    done.append(idx)
                     continue
+
+                if len(ListErrJobName) > 0:
+                    if len(os.popen('grep "Begin Fatal Exception" '+LogJobName).read()) > 0 or len(open(ListErrJobName[-1]).readlines()) > 0:
+                        if len(open(ListErrJobName[-1]).readlines()) > 0:
+                            print('\n ### INFO: Job', str(idx) , 'failed due to error', open(ListErrJobName[-1]).readlines())
+                        print(' ### INFO: Resubmitting job ' + str(idx))
+                        if not options.no_exec:
+                            os.system('rm '+ListErrJobName[-1])
+                            os.system('rm '+ListOutJobName[-1])
+                        resubmitting.append(idx)
+                else:
+                    running.append(idx)
+                    continue
+
             else:
-                continue
+                print(" ### INFO: Log file not existing yet")
 
         cmsRun = "cmsRun " + os.getcwd() + "/" + options.cfg + " outputFile=file:"+outRootName
         cmsRun = cmsRun+" maxEvents="+str(options.maxEvents)+" randseed="+str(randseed)
@@ -91,6 +100,16 @@ if __name__ == "__main__" :
         skimjob.close ()
 
         os.system ('chmod u+rwx ' + outJobName)
-        command = ('/home/llr/cms/evernazza/t3submit -'+options.queue+' \'' + outJobName +"\'")
+        command = ('/home/llr/cms/evernazza/t3submit -reserv -'+options.queue+' \'' + outJobName +"\'")
         print(command)
         if not options.no_exec: os.system (command)
+
+    if options.resubmit:
+        if len(running) > 0:
+            print(" ### BE PATIENT! "+str(len(running))+" job(s) still running ...")
+            print(running, "\n")
+        else:
+            if len(done) == int(options.nJobs):
+                print(" ### CONGRATULATION! EVERYTHING IS DONE! :)\n")
+            else:
+                print(" ### ALL JOBS DONE!\n")

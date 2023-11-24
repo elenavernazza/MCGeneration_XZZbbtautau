@@ -39,7 +39,7 @@ iseed SEED
 ! GGF_H production:
 ! **** Mandatory parameters for ALL models ****
 massren 0           ! Mass renormalization scheme. 0 = OS, 1 = MSBAR , 2 = DRBAR
-zerowidth 0         ! Control if the Higgs boson is to be produced on-shell or not: 1 = On-Shell; 0 = Off-shell with Breit-Wigner
+zerowidth 1         ! Control if the Higgs boson is to be produced on-shell or not: 1 = On-Shell; 0 = Off-shell with Breit-Wigner
 ew 0                ! ew = 0 disable EW corrections - ew = 1 enable EW corrections
 model 0
 gfermi 0.116637D-04        ! GF
@@ -47,7 +47,7 @@ hdecaymode -1      ! PDG code for first decay product of the higgs
 masswindow 9999d0  !(default 10d0) number of widths around hmass in the BW for an off-shell Higgs boson
 
 ! **** Mandatory parameters for SM or MW ****
-hmass 200d0            ! Higgs boson mass
+hmass 1000d0            ! Higgs boson mass
 hwidth 1.000D-03     ! Higgs boson width
 topmass 172.5        ! top quark mass
 bottommass 4.75d0    ! bottom quark mass - if defined it enables the bottom quark
