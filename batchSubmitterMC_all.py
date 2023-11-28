@@ -53,18 +53,20 @@ if __name__ == "__main__" :
         sys.exit(" ### ERROR: Specify gridpack location")
     print(" ### INFO: Gridpack location is", options.grid)
 
-    resubmitting = []
-    done = []
-    running = []
-
     starting_index = int(options.start_from)
     ending_index = starting_index + int(options.nJobs)
     print(" ### INFO: Index range", starting_index, ending_index)
     os.system('mkdir -p '+outdir+'/jobs')
+
+    status = {i: -1 for i in range(starting_index, ending_index)}
+
     for idx in range(starting_index, ending_index):
+        
+        resubmit = False
 
         os.system('mkdir -p '+outdir+'/jobs/' + str(idx))
         outJobName  = outdir + '/jobs/' + str(idx) + '/job_' + str(idx) + '.sh'
+        # if options.resubmit: outJobName = outdir + '/jobs/' + str(idx) + '/job_' + str(idx) + '_re.sh'
 
         # random seed for MC production should every time we submit a new generation
         # it's obtained by summing current Y+M+D+H+M+S+job_number
@@ -84,6 +86,19 @@ if __name__ == "__main__" :
                 inRootName = prev_dir + '/Ntuple_' + str(idx) + '_numEvent' + str(options.maxEvents) + '.root'
             outLogName  = outdir + '/jobs/' + str(idx) + '/log_' + str(step) + '_' + str(idx) + '.txt'
 
+            if options.resubmit:
+                if not resubmit:
+                  if os.path.isfile(outLogName):
+                      if len(os.popen('tail '+outLogName+' | grep dropped').read()) > 0:
+                          status[idx] = step
+                          continue
+                      elif len(os.popen('grep "Fatal" '+outLogName).read()) > 0 or len(os.popen('grep "fatal" '+outLogName).read()) > 0:
+                          resubmit = True
+                          if not "Error" in str(status[idx]):
+                            status[idx] = "Error Step%s" %(str(step))
+                  else:
+                      continue # not started yet
+
             cfg = conf_dict[step]['cfg']
             release = conf_dict[step]['release']
             cmsRun = 'cd /data_CMS/cms/vernazza/MCProduction/2023_11_14/%s/src\n' %release
@@ -100,51 +115,42 @@ if __name__ == "__main__" :
                 if not keep: cmsRun += "rm "+inRootName + '\n'
             cmsRuns.append(cmsRun)
 
-        # if options.resubmit:
-        #     LogJobName = outdir + '/jobs/' + str(idx) + '/log_' + str(idx) + '.txt'
-        #     ListErrJobName = glob.glob(outdir + '/jobs/' + str(idx) + '/job_' + str(idx) + '.sh.e*')
-        #     ListOutJobName = glob.glob(outdir + '/jobs/' + str(idx) + '/job_' + str(idx) + '.sh.o*')
-        #     if os.path.isfile(LogJobName):
-        #         if len(os.popen('tail '+LogJobName+' | grep dropped').read()) > 0 or len(os.popen('grep "2000th" '+LogJobName).read()) > 0:
-        #             done.append(idx)
-        #             continue
+        if not options.resubmit:
+            skimjob = open (outJobName, 'w')
+            skimjob.write ('#!/bin/bash\n')
+            skimjob.write ('export X509_USER_PROXY=~/.t3/proxy.cert\n')
+            skimjob.write ('source /cvmfs/cms.cern.ch/cmsset_default.sh\n')
+            for cmsRun in cmsRuns:
+                skimjob.write(cmsRun)
+            skimjob.close ()
 
-        #         if len(ListErrJobName) > 0:
-        #             if len(os.popen('grep "Begin Fatal Exception" '+LogJobName).read()) > 0 or len(open(ListErrJobName[-1]).readlines()) > 0:
-        #                 if len(open(ListErrJobName[-1]).readlines()) > 0:
-        #                     print('\n ### INFO: Job', str(idx) , 'failed due to error', open(ListErrJobName[-1]).readlines())
-        #                 print(' ### INFO: Resubmitting job ' + str(idx))
-        #                 if not options.no_exec:
-        #                     os.system('rm '+ListErrJobName[-1])
-        #                     os.system('rm '+ListOutJobName[-1])
-        #                 resubmitting.append(idx)
-        #         else:
-        #             running.append(idx)
-        #             continue
+            os.system ('chmod u+rwx ' + outJobName)
+        
+        if options.resubmit:
+            if not resubmit: continue
+            if not options.no_exec: os.system ('rm ' + outdir + '/jobs/' + str(idx) + '/log_*')
 
-        #     else:
-        #         print(" ### INFO: Log file not existing yet")
-
-
-        skimjob = open (outJobName, 'w')
-        skimjob.write ('#!/bin/bash\n')
-        skimjob.write ('export X509_USER_PROXY=~/.t3/proxy.cert\n')
-        skimjob.write ('source /cvmfs/cms.cern.ch/cmsset_default.sh\n')
-        for cmsRun in cmsRuns:
-            skimjob.write(cmsRun)
-        skimjob.close ()
-
-        os.system ('chmod u+rwx ' + outJobName)
-        command = ('/home/llr/cms/evernazza/t3submit -'+options.queue+' \'' + outJobName +"\'")
+        # command = ('/home/llr/cms/evernazza/t3submit -'+options.queue+' \'' + outJobName +"\'")
+        command = ('/opt/exp_soft/cms/t3/t3submit -reserv -'+options.queue+' \'' + outJobName +"\'")
         print(command)
         if not options.no_exec: os.system (command)
 
-    # if options.resubmit:
-    #     if len(running) > 0:
-    #         print(" ### BE PATIENT! "+str(len(running))+" job(s) still running ...")
-    #         print(running, "\n")
-    #     else:
-    #         if len(done) == int(options.nJobs):
-    #             print(" ### CONGRATULATION! EVERYTHING IS DONE! :)\n")
-    #         else:
-    #             print(" ### ALL JOBS DONE!\n")
+
+    if options.resubmit:
+        done = [i for i in status.keys() if status[i] == 4]
+        if len(done) == int(options.nJobs):
+            print(" ### CONGRATULATION! EVERYTHING IS DONE! :)\n")
+        else:
+            error = [i for i in status.keys() if "Error" in str(status[i])]
+            print(" ### JOBS RESUBMITTED: {}\n".format(error))
+            running_0 = [i for i in status.keys() if status[i] == -1]
+            running_1 = [i for i in status.keys() if status[i] == 0]
+            running_2 = [i for i in status.keys() if status[i] == 1]
+            running_3 = [i for i in status.keys() if status[i] == 2]
+            running_4 = [i for i in status.keys() if status[i] == 3]
+            print(" ### INFO: Running Step 0", running_0)
+            print(" ### INFO: Running Step 1", running_1)
+            print(" ### INFO: Running Step 2", running_2)
+            print(" ### INFO: Running Step 3", running_3)
+            print(" ### INFO: Running Step 4", running_4)
+            print(" ### INFO: Done", done)
