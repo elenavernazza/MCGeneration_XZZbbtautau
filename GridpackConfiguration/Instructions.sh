@@ -11,7 +11,7 @@ python ./run_pwg_condor.py -p 0 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13
 python ./run_pwg_condor.py -p 0 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1200_NW/gg_X_ZZbbtautau_quark-mass-effects_NNPDF30_13TeV.input -m gg_H_quark-mass-effects -f my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1200
 python ./run_pwg_condor.py -p 0 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1300_NW/gg_X_ZZbbtautau_quark-mass-effects_NNPDF30_13TeV.input -m gg_H_quark-mass-effects -f my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1300
 python ./run_pwg_condor.py -p 0 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1400_NW/gg_X_ZZbbtautau_quark-mass-effects_NNPDF30_13TeV.input -m gg_H_quark-mass-effects -f my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1400
-python ./run_pwg_condor.py -p 0 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1400_NW/gg_X_ZZbbtautau_quark-mass-effects_NNPDF30_13TeV.input -m gg_H_quark-mass-effects -f my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1500
+python ./run_pwg_condor.py -p 0 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1500_NW/gg_X_ZZbbtautau_quark-mass-effects_NNPDF30_13TeV.input -m gg_H_quark-mass-effects -f my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1500
 
 python ./run_pwg_condor.py -p 123 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M200_NW/gg_X_ZZbbtautau_quark-mass-effects_NNPDF30_13TeV.input -m gg_H_quark-mass-effects -f my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M200 -q long -n 50000
 python ./run_pwg_condor.py -p 123 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M300_NW/gg_X_ZZbbtautau_quark-mass-effects_NNPDF30_13TeV.input -m gg_H_quark-mass-effects -f my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M300 -q long -n 50000
