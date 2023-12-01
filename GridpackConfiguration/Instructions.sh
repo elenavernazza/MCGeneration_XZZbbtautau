@@ -12,6 +12,7 @@ python ./run_pwg_condor.py -p 0 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13
 python ./run_pwg_condor.py -p 0 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1300_NW/gg_X_ZZbbtautau_quark-mass-effects_NNPDF30_13TeV.input -m gg_H_quark-mass-effects -f my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1300
 python ./run_pwg_condor.py -p 0 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1400_NW/gg_X_ZZbbtautau_quark-mass-effects_NNPDF30_13TeV.input -m gg_H_quark-mass-effects -f my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1400
 python ./run_pwg_condor.py -p 0 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1500_NW/gg_X_ZZbbtautau_quark-mass-effects_NNPDF30_13TeV.input -m gg_H_quark-mass-effects -f my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1500
+python ./run_pwg_condor.py -p 0 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M2000_NW/gg_X_ZZbbtautau_quark-mass-effects_NNPDF30_13TeV.input -m gg_H_quark-mass-effects -f my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M2000
 
 python ./run_pwg_condor.py -p 123 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M200_NW/gg_X_ZZbbtautau_quark-mass-effects_NNPDF30_13TeV.input -m gg_H_quark-mass-effects -f my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M200 -q long -n 1000
 python ./run_pwg_condor.py -p 123 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M300_NW/gg_X_ZZbbtautau_quark-mass-effects_NNPDF30_13TeV.input -m gg_H_quark-mass-effects -f my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M300 -q long -n 1000
@@ -27,6 +28,7 @@ python ./run_pwg_condor.py -p 123 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_
 python ./run_pwg_condor.py -p 123 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1300_NW/gg_X_ZZbbtautau_quark-mass-effects_NNPDF30_13TeV.input -m gg_H_quark-mass-effects -f my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1300 -q long -n 1000
 python ./run_pwg_condor.py -p 123 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1400_NW/gg_X_ZZbbtautau_quark-mass-effects_NNPDF30_13TeV.input -m gg_H_quark-mass-effects -f my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1400 -q long -n 1000
 python ./run_pwg_condor.py -p 123 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1500_NW/gg_X_ZZbbtautau_quark-mass-effects_NNPDF30_13TeV.input -m gg_H_quark-mass-effects -f my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1500 -q long -n 1000
+python ./run_pwg_condor.py -p 123 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M2000_NW/gg_X_ZZbbtautau_quark-mass-effects_NNPDF30_13TeV.input -m gg_H_quark-mass-effects -f my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M2000 -q long -n 1000
 
 python ./run_pwg_condor.py -p 9 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M200_NW/gg_X_ZZbbtautau_quark-mass-effects_NNPDF30_13TeV.input -m gg_H_quark-mass-effects -f my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M200 -k 1
 mv gg_H_quark-mass-effects_slc7_amd64_gcc700_CMSSW_10_6_37_my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M200.tgz /data_CMS/cms/vernazza/MCProduction/2023_11_14/MyPrivateGridpacks
@@ -56,3 +58,5 @@ python ./run_pwg_condor.py -p 9 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13
 mv gg_H_quark-mass-effects_slc7_amd64_gcc700_CMSSW_10_6_37_my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1400.tgz /data_CMS/cms/vernazza/MCProduction/2023_11_14/MyPrivateGridpacks
 python ./run_pwg_condor.py -p 9 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1500_NW/gg_X_ZZbbtautau_quark-mass-effects_NNPDF30_13TeV.input -m gg_H_quark-mass-effects -f my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1500 -k 1
 mv gg_H_quark-mass-effects_slc7_amd64_gcc700_CMSSW_10_6_37_my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1500.tgz /data_CMS/cms/vernazza/MCProduction/2023_11_14/MyPrivateGridpacks
+python ./run_pwg_condor.py -p 9 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M2000_NW/gg_X_ZZbbtautau_quark-mass-effects_NNPDF30_13TeV.input -m gg_H_quark-mass-effects -f my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M2000 -k 1
+mv gg_H_quark-mass-effects_slc7_amd64_gcc700_CMSSW_10_6_37_my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M2000.tgz /data_CMS/cms/vernazza/MCProduction/2023_11_14/MyPrivateGridpacks

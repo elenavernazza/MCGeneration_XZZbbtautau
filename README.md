@@ -67,8 +67,7 @@ Once your configuration is ready,
 <summary>My private gridpack production</summary>
 
 ```
-ssh lxplus
-cd /afs/cern.ch/work/e/evernazz/FrameworkNanoAOD/GridpackProduction/2023_11_06/
+cd /data_CMS/cms/vernazza/MCProduction/2023_11_14/GridpackProduction/
 export SCRAM_ARCH=slc7_amd64_gcc700
 cmsrel CMSSW_10_6_37
 cd CMSSW_10_6_37/src/
@@ -107,6 +106,21 @@ python ./run_pwg_condor.py -p 123 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_
 python ./run_pwg_condor.py -p 9 -i gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M200_NW/gg_X_ZZbbtautau_quark-mass-effects_NNPDF30_13TeV.input -m gg_H_quark-mass-effects -f my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M200_NW -k 1
 ```
 This will generate the gridpack: `gg_H_quark-mass-effects_slc7_amd64_gcc10__my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M200_NW.tgz`
+
+For the already existing configuration:
+```
+cd /data_CMS/cms/vernazza/MCProduction/2023_11_14/GridpackProduction/
+export SCRAM_ARCH=slc7_amd64_gcc700
+cmsrel CMSSW_10_6_37
+cd CMSSW_10_6_37/src/
+cmsenv
+git clone -b powhegUL https://github.com/cms-sw/genproductions.git genproductions
+cd genproductions/bin/Powheg/
+git clone git@github.com:elenavernazza/MCGeneration_XZZbbtautau.git
+cp -r  MCGeneration_XZZbbtautau/GridpackConfiguration/gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M* .
+```
+
+Run all the commands in the `MCGeneration_XZZbbtautau/GridpackConfiguration/Instructions.sh` file.
 
 </details>
 
