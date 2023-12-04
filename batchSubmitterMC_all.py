@@ -131,7 +131,7 @@ if __name__ == "__main__" :
             if not options.no_exec: os.system ('rm ' + outdir + '/jobs/' + str(idx) + '/log_*')
 
         # command = ('/home/llr/cms/evernazza/t3submit -'+options.queue+' \'' + outJobName +"\'")
-        command = ('/opt/exp_soft/cms/t3/t3submit -reserv -'+options.queue+' \'' + outJobName +"\'")
+        command = ('/opt/exp_soft/cms/t3/t3submit -8c -reserv -'+options.queue+' \'' + outJobName +"\'")
         print(command)
         if not options.no_exec: os.system (command)
 
