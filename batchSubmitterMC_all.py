@@ -26,7 +26,7 @@ conf_dict = [
     {
       "release": "CMSSW_10_6_19_patch2",
       "cfg": "gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_4_cfg.py",
-      "KeepOutput": False,
+      "KeepOutput": True,
     }
 ]
 
@@ -80,10 +80,12 @@ if __name__ == "__main__" :
             
             cur_dir = outdir + '/Step_' + str(step)
             os.system('mkdir -p '+cur_dir)
+            outFileName = 'Step_' + str(step) + '_Ntuple_' + str(idx) + '.root' # filename in case of keeping the output on worker node
             outRootName = cur_dir + '/Ntuple_' + str(idx) + '.root'
             if step > 0:
                 prev_dir = outdir + '/Step_' + str(step-1)
-                inRootName = prev_dir + '/Ntuple_' + str(idx) + '_numEvent' + str(options.maxEvents) + '.root'
+                inFileName = 'Step_' + str(step-1) +'_Ntuple_' + str(idx) + '_numEvent' + str(options.maxEvents) + '.root' # filename in case input was kept on worker node
+                inRootName = prev_dir + '/' + 'Ntuple_' + str(idx) + '_numEvent' + str(options.maxEvents) + '.root'
             outLogName  = outdir + '/jobs/' + str(idx) + '/log_' + str(step) + '_' + str(idx) + '.txt'
 
             if options.resubmit:
@@ -101,18 +103,22 @@ if __name__ == "__main__" :
 
             cfg = conf_dict[step]['cfg']
             release = conf_dict[step]['release']
-            cmsRun = 'cd /data_CMS/cms/vernazza/MCProduction/2023_11_14/%s/src\n' %release
+            keep_previousStep = True if int(step) == 0 else conf_dict[int(step-1)]['KeepOutput']
+            keep_currentStep = conf_dict[int(step)]['KeepOutput']
+
+            cmsRun = 'cd /grid_mnt/data__data.polcms/cms/vernazza/MCProduction/2023_11_14/%s/src\n' %release
             cmsRun += 'cmsenv\n'
             cmsRun += 'eval `scram r -sh`\n'
-            cmsRun += 'cd %s\n' %(outdir + '/jobs/' + str(idx))
-            cmsRun += "cmsRun " + os.getcwd() + "/" + cfg + " outputFile=file:"+outRootName + \
+            #cmsRun += 'cd %s\n' %(outdir + '/jobs/' + str(idx))
+            cmsRun += 'cd -\n' # go back to job directory on node
+            cmsRun += "cmsRun " + os.getcwd() + "/" + cfg + " outputFile=file:"+ (outRootName if keep_currentStep else outFileName) + \
                 " maxEvents="+str(options.maxEvents)+" randseed="+str(randseed)
             if step == 0: cmsRun = cmsRun+" inputFiles="+options.grid
-            if int(step) > 0: cmsRun = cmsRun+" inputFiles=file:"+inRootName
+            if int(step) > 0: 
+                cmsRun = cmsRun+" inputFiles=file:"+ (inRootName if keep_previousStep else inFileName)
             cmsRun += " >& "+outLogName + '\n'
-            if int(step) > 0:
-                keep = conf_dict[int(step-1)]['KeepOutput']
-                if not keep: cmsRun += "rm "+inRootName + '\n'
+            if int(step) > 0 and not keep_previousStep:
+                cmsRun += "rm "+inFileName + '\n'
             cmsRuns.append(cmsRun)
 
         if not options.resubmit:
