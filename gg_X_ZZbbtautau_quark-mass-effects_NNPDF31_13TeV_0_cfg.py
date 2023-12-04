@@ -37,6 +37,7 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 # change the seed for each submission
 process.RandomNumberGeneratorService.generator.initialSeed = int(options.randseed)
+process.RandomNumberGeneratorService.externalLHEProducer.initialSeed = int(options.randseed)
 
 process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(options.maxEvents)
