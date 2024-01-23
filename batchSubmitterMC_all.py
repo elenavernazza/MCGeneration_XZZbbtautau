@@ -40,7 +40,7 @@ if __name__ == "__main__" :
     parser.add_option("--maxEvents", dest="maxEvents", type=int,            default=50,                              help="Number of events per job")
     parser.add_option("--nJobs",     dest="nJobs",     type=int,            default=1,                               help="Number of jobs")
     parser.add_option("--start_from",dest="start_from",type=int,            default=0,                               help="Start random seed from")
-    parser.add_option("--queue",     dest="queue",     type=str,            default='short',                         help="long or short queue")
+    parser.add_option("--queue",     dest="queue",     type=str,            default='reserv',                        help="long or short queue")
     parser.add_option("--no_exec",   dest="no_exec",   action='store_true', default=False)
     parser.add_option("--resubmit",  dest="resubmit",  action='store_true', default=False)
     (options, args) = parser.parse_args()
@@ -137,7 +137,7 @@ if __name__ == "__main__" :
             if not options.no_exec: os.system ('rm ' + outdir + '/jobs/' + str(idx) + '/log_*')
 
         # command = ('/home/llr/cms/evernazza/t3submit -'+options.queue+' \'' + outJobName +"\'")
-        command = ('/opt/exp_soft/cms/t3/t3submit -8c -reserv -'+options.queue+' \'' + outJobName +"\'")
+        command = ('/opt/exp_soft/cms/t3/t3submit -8c -'+options.queue+' \'' + outJobName +"\'")
         print(command)
         if not options.no_exec: os.system (command)
 
