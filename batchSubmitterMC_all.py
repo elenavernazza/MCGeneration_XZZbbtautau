@@ -2,7 +2,8 @@ import os, glob, sys
 from datetime import datetime
 from optparse import OptionParser
 
-conf_dict = [
+multi_conf_dict = {
+"gg_X_ZZbbtautau" : [
     {
       "release": "CMSSW_10_6_18",
       "cfg": "gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_0_cfg.py",
@@ -28,7 +29,45 @@ conf_dict = [
       "cfg": "gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_4_cfg.py",
       "KeepOutput": True,
     }
+],
+"gg_Zprime_ZHtautaubb" : [
+    {
+      "release": "CMSSW_10_2_13_patch1",
+      "cfg": "gg_Zprime_ZHtautaubb_0_cfg.py",
+      "KeepOutput": False,
+    },
+    {
+      "release": "CMSSW_10_2_5",
+      "cfg": "gg_Zprime_ZHtautaubb_1_cfg.py",
+      "KeepOutput": False,
+    },
+    {
+      "release": "CMSSW_10_2_5",
+      "cfg": "gg_Zprime_ZHtautaubb_2_cfg.py",
+      "KeepOutput": False,
+    },
+    {
+      "release": "CMSSW_10_2_5",
+      "cfg": "gg_Zprime_ZHtautaubb_3_cfg.py",
+      "KeepOutput": True,
+    },
+    {
+      "release": "CMSSW_10_2_22",
+      "cfg": "gg_Zprime_ZHtautaubb_4_cfg.py",
+      "KeepOutput": True,
+    },
 ]
+}
+
+def findCmsswRelease(releaseName:str) -> str:
+    """ Finds CMSSW release location (created with cmsrel). Returns path to src folder, ie  /grid_mnt/data__data.polcms/cms/cuisset/ZHbbtautau/cmsReleases/CMSSW_10_2_22/src/ """
+    bases = ["/grid_mnt/data__data.polcms/cms/vernazza/MCProduction/2023_11_14",
+             "/grid_mnt/data__data.polcms/cms/cuisset/ZHbbtautau/cmsReleases"]
+    for base in bases:
+        pathToSrc = os.path.join(base, releaseName, "src")
+        if os.path.isdir(pathToSrc):
+            return pathToSrc
+    raise RuntimeError("Could not find CMSSW release version " + releaseName)
 
 # Script to submit MC production
 
@@ -37,6 +76,7 @@ if __name__ == "__main__" :
     parser = OptionParser()    
     parser.add_option("--base",      dest="base",      type=str,            default=None,                            help="Base output folder name")
     parser.add_option("--grid",      dest="grid",      type=str,            default=None,                            help="Gridpack location for step 0")
+    parser.add_option("--process",   dest="process",   type=str,            default=None,                            help="Name of process ["+', '.join(multi_conf_dict.keys())+"]")
     parser.add_option("--maxEvents", dest="maxEvents", type=int,            default=50,                              help="Number of events per job")
     parser.add_option("--nJobs",     dest="nJobs",     type=int,            default=1,                               help="Number of jobs")
     parser.add_option("--start_from",dest="start_from",type=int,            default=0,                               help="Start random seed from")
@@ -45,6 +85,13 @@ if __name__ == "__main__" :
     parser.add_option("--resubmit",  dest="resubmit",  action='store_true', default=False)
     (options, args) = parser.parse_args()
 
+    try:
+        conf_dict = multi_conf_dict[options.process]
+    except KeyError as e:
+        print("Invalid process specified (" + str(e) + ")", file=sys.stderr)
+        print("Possible options : " + ', '.join(multi_conf_dict.keys()))
+        sys.exit(-5)
+    
     outdir = options.base
     print(" ### INFO: Saving output in", outdir)
     os.system('mkdir -p '+outdir)
@@ -106,7 +153,7 @@ if __name__ == "__main__" :
             keep_previousStep = True if int(step) == 0 else conf_dict[int(step-1)]['KeepOutput']
             keep_currentStep = conf_dict[int(step)]['KeepOutput']
 
-            cmsRun = 'cd /grid_mnt/data__data.polcms/cms/vernazza/MCProduction/2023_11_14/%s/src\n' %release
+            cmsRun = 'cd "' + findCmsswRelease(release) + '"\n'
             cmsRun += 'cmsenv\n'
             cmsRun += 'eval `scram r -sh`\n'
             #cmsRun += 'cd %s\n' %(outdir + '/jobs/' + str(idx))
