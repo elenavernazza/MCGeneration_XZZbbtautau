@@ -2,6 +2,9 @@ import os, glob, sys
 from datetime import datetime
 from optparse import OptionParser
 
+""" Config dictionnary. Key is name to be passed as command line argument. Value is array of processing steps in order.
+Can sepecify either "cfg" : cmssw python config to be run using cmsRun, or "cmsDriver" : string of commands to be passed to cmsDriver.py
+"""
 multi_conf_dict = {
 "gg_X_ZZbbtautau" : [
     {
@@ -30,7 +33,7 @@ multi_conf_dict = {
       "KeepOutput": True,
     }
 ],
-"gg_Zprime_ZHtautaubb" : [
+"gg_Zprime_ZHtautaubb_v1" : [ # first version of ZtautauHbb config, uses MiniAODv1 which causes problems for nanoAOD production later on
     {
       "release": "CMSSW_10_2_13_patch1",
       "cfg": "gg_Zprime_ZHtautaubb_0_cfg.py",
@@ -54,6 +57,43 @@ multi_conf_dict = {
     {
       "release": "CMSSW_10_2_22",
       "cfg": "gg_Zprime_ZHtautaubb_4_cfg.py",
+      "KeepOutput": True,
+    },
+],
+"Zprime_Zh_Zbbhtautau_v2" : [ # second version of Zprime_Zh_Zbbhtautau, based on MiniAODv2 and nanoAODv9 (copied from DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8 production for RunIISummer20UL18)
+    { # LHE,GEN
+      "release": "CMSSW_10_6_19_patch3", 
+      "cmsDriver": 'cmsDriver.py Configuration/GenProduction/python/Zprime_ZH_fragment_template.py --python_filename B2G-RunIIFall18wmLHEGS-01094_1_cfg.py --eventcontent RAWSIM,LHE --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN,LHE --fileout file:EGM-RunIISummer20UL18wmLHEGEN-00001.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --customise_commands process.source.numberEventsInLuminosityBlock="cms.untracked.uint32(270)" --step LHE,GEN --geometry DB:Extended --era Run2_2018 --mc',
+      "KeepOutput": False,
+    },
+    { # SIM,
+      "release": "CMSSW_10_6_17_patch1",
+      "cmsDriver": "cmsDriver.py --python_filename EGM-RunIISummer20UL18SIM-00002_1_cfg.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:EGM-RunIISummer20UL18SIM-00002.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:EGM-RunIISummer20UL18wmLHEGEN-00001.root --era Run2_2018 --runUnscheduled  --mc",
+      "KeepOutput": False,
+    },
+    { # DIGI,DATAMIX,L1,DIGI2RAW
+      "release": "CMSSW_10_6_17_patch1",
+      "cmsDriver": 'cmsDriver.py --python_filename EGM-RunIISummer20UL18DIGIPremix-00002_1_cfg.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:EGM-RunIISummer20UL18DIGIPremix-00002.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:EGM-RunIISummer20UL18SIM-00002.root --datamix PreMix --era Run2_2018 --runUnscheduled  --mc',
+      "KeepOutput": False,
+    },
+    { # HLT
+      "release": "CMSSW_10_2_16_UL",
+      "cmsDriver": 'cmsDriver.py  --python_filename EGM-RunIISummer20UL18HLT-00002_1_cfg.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:EGM-RunIISummer20UL18HLT-00002.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands \'process.source.bypassVersionCheck = cms.untracked.bool(True)\' --step HLT:2018v32 --geometry DB:Extended --filein file:EGM-RunIISummer20UL18DIGIPremix-00002.root --era Run2_2018 --mc',
+      "KeepOutput": False,
+    },
+    { # RECO
+      "release": "CMSSW_10_6_17_patch1",
+      "cmsDriver": 'cmsDriver.py --python_filename EGM-RunIISummer20UL18RECO-00002_1_cfg.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:EGM-RunIISummer20UL18RECO-00002.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:EGM-RunIISummer20UL18HLT-00002.root --era Run2_2018 --runUnscheduled  --mc',
+      "KeepOutput": False,
+    },
+    {  # MINIAOD
+      "release": "CMSSW_10_6_20",
+      "cmsDriver": 'cmsDriver.py --python_filename EGM-RunIISummer20UL18MiniAODv2-00004_1_cfg.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:EGM-RunIISummer20UL18MiniAODv2-00004.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein "file:EGM-RunIISummer20UL18RECO-00002.root" --era Run2_2018 --runUnscheduled  --mc',
+      "KeepOutput": True,
+    },
+    { # NANO
+      "release": "CMSSW_10_6_27", # nanoaod twiki says CMSSW_10_6_27, DY prod used CMSSW_10_6_26 + changed NANOEDMAODSIM to NANOAODSIM
+      "cmsDriver": 'cmsDriver.py --python_filename EGM-RunIISummer20UL18NanoAODv9-00005_1_cfg.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:EGM-RunIISummer20UL18NanoAODv9-00005.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --customise_commands "process.add_(cms.Service(\'InitRootHandlers\', EnableIMT = cms.untracked.bool(False))) \\n from PhysicsTools.NanoAOD.custom_jme_cff import PrepJMECustomNanoAOD_MC; PrepJMECustomNanoAOD_MC(process)" --step NANO --filein "dbs:/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2/MINIAODSIM" --era Run2_2018,run2_nanoAOD_106Xv2  --mc',
       "KeepOutput": True,
     },
 ]
@@ -131,8 +171,8 @@ if __name__ == "__main__" :
             outRootName = cur_dir + '/Ntuple_' + str(idx) + '.root'
             if step > 0:
                 prev_dir = outdir + '/Step_' + str(step-1)
-                inFileName = 'Step_' + str(step-1) +'_Ntuple_' + str(idx) + '_numEvent' + str(options.maxEvents) + '.root' # filename in case input was kept on worker node
-                inRootName = prev_dir + '/' + 'Ntuple_' + str(idx) + '_numEvent' + str(options.maxEvents) + '.root'
+                inFileName = 'Step_' + str(step-1) +'_Ntuple_' + str(idx) + '.root' # filename in case input was kept on worker node
+                inRootName = prev_dir + '/' + 'Ntuple_' + str(idx) + '.root'
             outLogName  = outdir + '/jobs/' + str(idx) + '/log_' + str(step) + '_' + str(idx) + '.txt'
 
             if options.resubmit:
@@ -148,29 +188,51 @@ if __name__ == "__main__" :
                   else:
                       continue # not started yet
 
-            cfg = conf_dict[step]['cfg']
+            cfg = conf_dict[step].get('cfg', None)
+            cmsDriverCommand = conf_dict[step].get('cmsDriver', None)
+            assert (cfg is None) ^ (cmsDriverCommand is None), "In config, either cfg or cmsDriver must be set (not both)"
             release = conf_dict[step]['release']
             keep_previousStep = True if int(step) == 0 else conf_dict[int(step-1)]['KeepOutput']
             keep_currentStep = conf_dict[int(step)]['KeepOutput']
 
-            cmsRun = 'cd "' + findCmsswRelease(release) + '"\n'
-            cmsRun += 'cmsenv\n'
-            cmsRun += 'eval `scram r -sh`\n'
-            #cmsRun += 'cd %s\n' %(outdir + '/jobs/' + str(idx))
-            cmsRun += 'cd -\n' # go back to job directory on node
-            cmsRun += "cmsRun " + os.getcwd() + "/" + cfg + " outputFile=file:"+ (outRootName if keep_currentStep else outFileName) + \
-                " maxEvents="+str(options.maxEvents)+" randseed="+str(randseed)
-            if step == 0: cmsRun = cmsRun+" inputFiles="+options.grid
-            if int(step) > 0: 
-                cmsRun = cmsRun+" inputFiles=file:"+ (inRootName if keep_previousStep else inFileName)
-            cmsRun += " >& "+outLogName + '\n'
+            scriptRun = 'cd "' + findCmsswRelease(release) + '"\n'
+            scriptRun += 'cmsenv\n'
+            scriptRun += 'eval `scram r -sh`\n'
+            #scriptRun += 'cd %s\n' %(outdir + '/jobs/' + str(idx))
+            scriptRun += 'cd -\n' # go back to job directory on node
+            if cfg is not None: # cmsRun mode
+              scriptRun += "cmsRun " + os.getcwd() + "/" + cfg + " outputFile=file:"+ (outRootName if keep_currentStep else outFileName) + \
+                  " maxEvents="+str(options.maxEvents)+" randseed="+str(randseed)
+              if step == 0: scriptRun = scriptRun+" inputFiles="+options.grid
+              if int(step) > 0: 
+                  scriptRun = scriptRun+" inputFiles=file:"+ (inRootName if keep_previousStep else inFileName)
+              scriptRun += " >& "+outLogName + '\n'
+
+            else: # cmsDriver mode
+                scriptRun += cmsDriverCommand + f" --no_exec --python_filename Step_{step}_cfg.py -n {str(options.maxEvents)} "
+                if int(step) > 0:
+                  scriptRun += f"--filein 'file:{(inRootName if keep_previousStep else inFileName)}' "
+                scriptRun += f"--fileout 'file:{(outRootName if keep_currentStep else outFileName)}' "
+                
+                scriptRun += "\n"
+                scriptRun += f"echo 'process.RandomNumberGeneratorService.generator.initialSeed = {str(randseed)}' >> Step_{step}_cfg.py\n"
+                if step == 0:
+                  scriptRun += f"echo 'process.RandomNumberGeneratorService.externalLHEProducer.initialSeed = {str(randseed)}' >> Step_{step}_cfg.py\n"
+                  scriptRun += f"echo 'process.externalLHEProducer.args = cms.vstring(\"{options.grid}\")' >> Step_{step}_cfg.py\n"
+                  scriptRun += f"echo 'process.externalLHEProducer.nEvents = cms.untracked.uint32({options.maxEvents})' >> Step_{step}_cfg.py\n"
+                scriptRun += f"cmsRun -n 8 Step_{step}_cfg.py  >&{outLogName}\n"
+
+            
             if int(step) > 0 and not keep_previousStep:
-                cmsRun += "rm "+inFileName + '\n'
-            cmsRuns.append(cmsRun)
+                scriptRun += "rm "+inFileName + '\n'
+                if int(step) == 1: # remove LHE file as well (otherwise it gets shipped back at the end of the job)
+                    scriptRun += f"rm Step_0_Ntuple_{str(idx)}_inLHE.root\n"
+            cmsRuns.append(scriptRun)
 
         if not options.resubmit:
             skimjob = open (outJobName, 'w')
             skimjob.write ('#!/bin/bash\n')
+            skimjob.write ('set -e\n') # abort script at first error
             skimjob.write ('export X509_USER_PROXY=~/.t3/proxy.cert\n')
             skimjob.write ('source /cvmfs/cms.cern.ch/cmsset_default.sh\n')
             for cmsRun in cmsRuns:
