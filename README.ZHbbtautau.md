@@ -96,16 +96,15 @@ CMSSW releases are in `/grid_mnt/data__data.polcms/cms/cuisset/ZHbbtautau/cmsRel
 
 <details>
 <summary>v1 production of ZbbHtautau</summary>
-Getting the fragment : 
+Getting the fragment for v1: 
 ~~~bash
 cd /grid_mnt/data__data.polcms/cms/cuisset/ZHbbtautau/cmsReleases/CMSSW_10_2_13_patch1/src
 cmsenv
 curl -s -k https://cms-pdmv-prod.web.cern.ch/mcm/public/restapi/requests/get_fragment/B2G-RunIIFall18wmLHEGS-01094 --retry 3 --create-dirs -o Configuration/GenProduction/python/B2G-RunIIFall18wmLHEGS-01094-fragment.py
 scram b
 ~~~
-</details>
 
-Getting the fragment : 
+Getting the fragment for v2: 
 ~~~bash
 cd /grid_mnt/data__data.polcms/cms/cuisset/ZHbbtautau/cmsReleases/CMSSW_10_6_19_patch3/src
 cmsenv
@@ -113,6 +112,21 @@ curl -s -k https://cms-pdmv-prod.web.cern.ch/mcm/public/restapi/requests/get_fra
 # I replaced line 4 to  args = cms.vstring('ADD_CORRECT_GRIDPACK'), just in case (to make sure we don't use the B2G gridpacks, normally this is changed later in batch_submitter)
 scram b
 ~~~
+</details>
+
+Installing the fragment for v3
+~~~bash
+cd /grid_mnt/data__data.polcms/cms/cuisset/ZHbbtautau/cmsReleases/CMSSW_10_6_19_patch3/src
+mkdir -p Configuration/GenProduction/python
+cp /home/llr/cms/cuisset/bbtautau/ZHbbtautau/MCGeneration/Zprime_ZH_fragment_template.py Configuration/GenProduction/python/
+# I replaced line 4 to  args = cms.vstring('ADD_CORRECT_GRIDPACK'), just in case (to make sure we don't use the B2G gridpacks, normally this is changed later in batch_submitter)
+# I also removed the POWHEG-related config line (not sure about this)
+
+cmsenv
+
+scram b
+~~~
+
 
 ### cmsDriver commands
 `cd /home/llr/cms/cuisset/bbtautau/ZHbbtautau/MCGeneration`
@@ -193,6 +207,8 @@ cmsDriver.py  --python_filename gg_Zprime_ZHtautaubb_4_cfg.py --eventcontent NAN
 
 </details>
 
+
+We copied the commands from a Drell-Yan production found on cmsdas
 #### Commands used for DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8 (2018 UL)
  - [LHEGEN](https://cms-pdmv-prod.web.cern.ch/mcm/requests?prepid=EGM-RunIISummer20UL18wmLHEGEN-00001&shown=4458623), CMSSW_10_6_19_patch3 : `cmsDriver.py Configuration/GenProduction/python/EGM-RunIISummer20UL18wmLHEGEN-00001-fragment.py --python_filename EGM-RunIISummer20UL18wmLHEGEN-00001_1_cfg.py --eventcontent RAWSIM,LHE --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN,LHE --fileout file:EGM-RunIISummer20UL18wmLHEGEN-00001.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --customise_commands process.source.numberEventsInLuminosityBlock="cms.untracked.uint32(270)" --step LHE,GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n $EVENTS`
  - [sim](https://cms-pdmv-prod.web.cern.ch/mcm/requests?prepid=EGM-RunIISummer20UL18SIM-00002&page=0&shown=2151678079) 	
@@ -357,11 +373,11 @@ python3 $SCRIPT \
 ### Runs version 3
 With new gridpacks (same as those used for central production), with cut_decays = true
 
-Mass points run : 1000
 ~~~bash
+SCRIPT=/home/llr/cms/cuisset/bbtautau/ZHbbtautau/MCGeneration/batchSubmitterMC_all.py
 BASE_DIR=/grid_mnt/data__data.polcms/cms/cuisset/ZHbbtautau/jobs/Zprime_v3
 
-for MASS in 2000 3000 5000; do
+for MASS in 3000 4000; do
 cd $BASE_DIR
 mkdir Zprime_Zh_Zbbhtautau_M$MASS
 cd Zprime_Zh_Zbbhtautau_M$MASS
@@ -369,7 +385,20 @@ cd Zprime_Zh_Zbbhtautau_M$MASS
 python3 $SCRIPT \
 --process Zprime_Zh_Zbbhtautau_v2 \
 --grid /grid_mnt/data__data.polcms/cms/cuisset/ZHbbtautau/gridpacks/Zprime_Zh_Zbbhtautau_narrow_M$MASS\_slc7_amd64_gcc10_CMSSW_12_4_8_tarball.tar.xz \
---maxEvents 1000 --nJobs 50 --start_from 0 --queue long \
+--maxEvents 1000 --nJobs 200 --start_from 0 --queue long \
+--base $(pwd) 
+done
+
+## ZttHbb
+for MASS in 3000 4000; do
+cd $BASE_DIR
+mkdir Zprime_Zh_Ztautauhbb_M$MASS
+cd Zprime_Zh_Ztautauhbb_M$MASS
+
+python3 $SCRIPT \
+--process Zprime_Zh_Zbbhtautau_v2 \
+--grid /grid_mnt/data__data.polcms/cms/cuisset/ZHbbtautau/gridpacks/Zprime_Zh_Ztautauhbb_narrow_M$MASS\_slc7_amd64_gcc10_CMSSW_12_4_8_tarball.tar.xz \
+--maxEvents 1000 --nJobs 200 --start_from 0 --queue long \
 --base $(pwd) 
 done
 ~~~

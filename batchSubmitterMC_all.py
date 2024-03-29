@@ -63,7 +63,7 @@ multi_conf_dict = {
 "Zprime_Zh_Zbbhtautau_v2" : [ # second version of Zprime_Zh_Zbbhtautau, based on MiniAODv2 and nanoAODv9 (copied from DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8 production for RunIISummer20UL18)
     { # LHE,GEN
       "release": "CMSSW_10_6_19_patch3", 
-      "cmsDriver": 'cmsDriver.py Configuration/GenProduction/python/B2G-RunIIFall18wmLHEGS-01094-fragment.py --python_filename B2G-RunIIFall18wmLHEGS-01094_1_cfg.py --eventcontent RAWSIM,LHE --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN,LHE --fileout file:EGM-RunIISummer20UL18wmLHEGEN-00001.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --customise_commands process.source.numberEventsInLuminosityBlock="cms.untracked.uint32(270)" --step LHE,GEN --geometry DB:Extended --era Run2_2018 --mc',
+      "cmsDriver": 'cmsDriver.py Configuration/GenProduction/python/Zprime_ZH_fragment_template.py --python_filename B2G-RunIIFall18wmLHEGS-01094_1_cfg.py --eventcontent RAWSIM,LHE --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN,LHE --fileout file:EGM-RunIISummer20UL18wmLHEGEN-00001.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --customise_commands process.source.numberEventsInLuminosityBlock="cms.untracked.uint32(270)" --step LHE,GEN --geometry DB:Extended --era Run2_2018 --mc',
       "KeepOutput": False,
     },
     { # SIM,
@@ -225,6 +225,8 @@ if __name__ == "__main__" :
             
             if int(step) > 0 and not keep_previousStep:
                 scriptRun += "rm "+inFileName + '\n'
+                if int(step) == 1: # remove LHE file as well (otherwise it gets shipped back at the end of the job)
+                    scriptRun += f"rm Step_0_Ntuple_{str(idx)}_inLHE.root\n"
             cmsRuns.append(scriptRun)
 
         if not options.resubmit:
