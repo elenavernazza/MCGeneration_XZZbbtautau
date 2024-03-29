@@ -7,31 +7,41 @@ Can sepecify either "cfg" : cmssw python config to be run using cmsRun, or "cmsD
 """
 multi_conf_dict = {
 "gg_X_ZZbbtautau" : [
-    {
-      "release": "CMSSW_10_6_18",
-      "cfg": "gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_0_cfg.py",
+    { # LHE,GEN
+      "release": "CMSSW_10_6_19_patch3", 
+      "cmsDriver": 'cmsDriver.py Configuration/GenProduction/python/X_ZZ_fragment_template.py --python_filename B2G-RunIIFall18wmLHEGS-01094_1_cfg.py --eventcontent RAWSIM,LHE --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN,LHE --fileout file:EGM-RunIISummer20UL18wmLHEGEN-00001.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --customise_commands process.source.numberEventsInLuminosityBlock="cms.untracked.uint32(270)" --step LHE,GEN --geometry DB:Extended --era Run2_2018 --mc',
       "KeepOutput": False,
     },
-    {
+    { # SIM,
       "release": "CMSSW_10_6_17_patch1",
-      "cfg": "gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_1_cfg.py",
+      "cmsDriver": "cmsDriver.py --python_filename EGM-RunIISummer20UL18SIM-00002_1_cfg.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:EGM-RunIISummer20UL18SIM-00002.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:EGM-RunIISummer20UL18wmLHEGEN-00001.root --era Run2_2018 --runUnscheduled  --mc",
       "KeepOutput": False,
     },
-    {
+    { # DIGI,DATAMIX,L1,DIGI2RAW
+      "release": "CMSSW_10_6_17_patch1",
+      "cmsDriver": 'cmsDriver.py --python_filename EGM-RunIISummer20UL18DIGIPremix-00002_1_cfg.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:EGM-RunIISummer20UL18DIGIPremix-00002.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:EGM-RunIISummer20UL18SIM-00002.root --datamix PreMix --era Run2_2018 --runUnscheduled  --mc',
+      "KeepOutput": False,
+    },
+    { # HLT
       "release": "CMSSW_10_2_16_UL",
-      "cfg": "gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_2_cfg.py",
+      "cmsDriver": 'cmsDriver.py  --python_filename EGM-RunIISummer20UL18HLT-00002_1_cfg.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:EGM-RunIISummer20UL18HLT-00002.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands \'process.source.bypassVersionCheck = cms.untracked.bool(True)\' --step HLT:2018v32 --geometry DB:Extended --filein file:EGM-RunIISummer20UL18DIGIPremix-00002.root --era Run2_2018 --mc',
       "KeepOutput": False,
     },
-    {
+    { # RECO
       "release": "CMSSW_10_6_17_patch1",
-      "cfg": "gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_3_cfg.py",
+      "cmsDriver": 'cmsDriver.py --python_filename EGM-RunIISummer20UL18RECO-00002_1_cfg.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:EGM-RunIISummer20UL18RECO-00002.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:EGM-RunIISummer20UL18HLT-00002.root --era Run2_2018 --runUnscheduled  --mc',
+      "KeepOutput": False,
+    },
+    {  # MINIAOD
+      "release": "CMSSW_10_6_20",
+      "cmsDriver": 'cmsDriver.py --python_filename EGM-RunIISummer20UL18MiniAODv2-00004_1_cfg.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:EGM-RunIISummer20UL18MiniAODv2-00004.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein "file:EGM-RunIISummer20UL18RECO-00002.root" --era Run2_2018 --runUnscheduled  --mc',
       "KeepOutput": True,
     },
-    {
-      "release": "CMSSW_10_6_19_patch2",
-      "cfg": "gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_4_cfg.py",
+    { # NANO
+      "release": "CMSSW_10_6_27", # nanoaod twiki says CMSSW_10_6_27, DY prod used CMSSW_10_6_26 + changed NANOEDMAODSIM to NANOAODSIM
+      "cmsDriver": 'cmsDriver.py --python_filename EGM-RunIISummer20UL18NanoAODv9-00005_1_cfg.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:EGM-RunIISummer20UL18NanoAODv9-00005.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --customise_commands "process.add_(cms.Service(\'InitRootHandlers\', EnableIMT = cms.untracked.bool(False))) \\n from PhysicsTools.NanoAOD.custom_jme_cff import PrepJMECustomNanoAOD_MC; PrepJMECustomNanoAOD_MC(process)" --step NANO --filein "dbs:/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2/MINIAODSIM" --era Run2_2018,run2_nanoAOD_106Xv2  --mc',
       "KeepOutput": True,
-    }
+    },
 ],
 "gg_Zprime_ZHtautaubb_v1" : [ # first version of ZtautauHbb config, uses MiniAODv1 which causes problems for nanoAOD production later on
     {
@@ -249,7 +259,6 @@ if __name__ == "__main__" :
         command = ('/opt/exp_soft/cms/t3/t3submit -8c -'+options.queue+' \'' + outJobName +"\'")
         print(command)
         if not options.no_exec: os.system (command)
-
 
     if options.resubmit:
         done = [i for i in status.keys() if status[i] == 4]
