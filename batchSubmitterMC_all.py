@@ -1,4 +1,4 @@
-import os, glob, sys
+import os, glob, sys, pdb
 from datetime import datetime
 from optparse import OptionParser
 
@@ -261,7 +261,8 @@ if __name__ == "__main__" :
         if not options.no_exec: os.system (command)
 
     if options.resubmit:
-        done = [i for i in status.keys() if status[i] == 4]
+        # pdb.set_trace()
+        done = [i for i in status.keys() if status[i] == 6]
         if len(done) == int(options.nJobs):
             print(" ### CONGRATULATION! EVERYTHING IS DONE! :)\n")
         else:
@@ -272,9 +273,13 @@ if __name__ == "__main__" :
             running_2 = [i for i in status.keys() if status[i] == 1]
             running_3 = [i for i in status.keys() if status[i] == 2]
             running_4 = [i for i in status.keys() if status[i] == 3]
+            running_5 = [i for i in status.keys() if status[i] == 4]
+            running_6 = [i for i in status.keys() if status[i] == 5]
             print(" ### INFO: Running Step 0", running_0)
             print(" ### INFO: Running Step 1", running_1)
             print(" ### INFO: Running Step 2", running_2)
             print(" ### INFO: Running Step 3", running_3)
             print(" ### INFO: Running Step 4", running_4)
+            print(" ### INFO: Running Step 5", running_5)
+            print(" ### INFO: Running Step 6", running_6)
             print(" ### INFO: Done", done)

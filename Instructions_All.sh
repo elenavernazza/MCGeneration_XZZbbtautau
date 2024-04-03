@@ -1,13 +1,77 @@
 ####################################################################################################################################
-####################################################################################################################################
+# FULL 2018
 ####################################################################################################################################
 
-python3 batchSubmitterMC_all.py \
---grid /data_CMS/cms/vernazza/MCProduction/2023_11_14/MyPrivateGridpacks/GridpacksZZ/gg_H_quark-mass-effects_slc7_amd64_gcc700_CMSSW_10_6_37_my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M200.tgz \
---process gg_X_ZZbbtautau \
---maxEvents 10 --nJobs 1 --start_from 0 --queue short --no_exec \
---base /data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/gg_X_ZZbbtautau_M200
-
+# python3 batchSubmitterMC_all.py \
+# --grid /data_CMS/cms/vernazza/MCProduction/2023_11_14/MyPrivateGridpacks/GridpacksZZ/gg_H_quark-mass-effects_slc7_amd64_gcc700_CMSSW_10_6_37_my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M200.tgz \
+# --process gg_X_ZZbbtautau \
+# --maxEvents 1000 --nJobs 200 --start_from 0 --queue long \
+# --base /data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/gg_X_ZZbbtautau_M200
+# python3 batchSubmitterMC_all.py \
+# --grid /data_CMS/cms/vernazza/MCProduction/2023_11_14/MyPrivateGridpacks/GridpacksZZ/gg_H_quark-mass-effects_slc7_amd64_gcc700_CMSSW_10_6_37_my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M300.tgz \
+# --process gg_X_ZZbbtautau \
+# --maxEvents 1000 --nJobs 200 --start_from 0 --queue long \
+# --base /data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/gg_X_ZZbbtautau_M300
+# python3 batchSubmitterMC_all.py \
+# --grid /data_CMS/cms/vernazza/MCProduction/2023_11_14/MyPrivateGridpacks/GridpacksZZ/gg_H_quark-mass-effects_slc7_amd64_gcc700_CMSSW_10_6_37_my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M400.tgz \
+# --process gg_X_ZZbbtautau \
+# --maxEvents 1000 --nJobs 200 --start_from 0 --queue long \
+# --base /data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/gg_X_ZZbbtautau_M400
+# python3 batchSubmitterMC_all.py \
+# --grid /data_CMS/cms/vernazza/MCProduction/2023_11_14/MyPrivateGridpacks/GridpacksZZ/gg_H_quark-mass-effects_slc7_amd64_gcc700_CMSSW_10_6_37_my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M500.tgz \
+# --process gg_X_ZZbbtautau \
+# --maxEvents 1000 --nJobs 200 --start_from 0 --queue long \
+# --base /data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/gg_X_ZZbbtautau_M500
+# python3 batchSubmitterMC_all.py \
+# --grid /data_CMS/cms/vernazza/MCProduction/2023_11_14/MyPrivateGridpacks/GridpacksZZ/gg_H_quark-mass-effects_slc7_amd64_gcc700_CMSSW_10_6_37_my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M600.tgz \
+# --process gg_X_ZZbbtautau \
+# --maxEvents 1000 --nJobs 200 --start_from 0 --queue long \
+# --base /data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/gg_X_ZZbbtautau_M600
+# python3 batchSubmitterMC_all.py \
+# --grid /data_CMS/cms/vernazza/MCProduction/2023_11_14/MyPrivateGridpacks/GridpacksZZ/gg_H_quark-mass-effects_slc7_amd64_gcc700_CMSSW_10_6_37_my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M700.tgz \
+# --process gg_X_ZZbbtautau \
+# --maxEvents 1000 --nJobs 200 --start_from 0 --queue reserv \
+# --base /data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/gg_X_ZZbbtautau_M700
+# python3 batchSubmitterMC_all.py \
+# --grid /data_CMS/cms/vernazza/MCProduction/2023_11_14/MyPrivateGridpacks/GridpacksZZ/gg_H_quark-mass-effects_slc7_amd64_gcc700_CMSSW_10_6_37_my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M800.tgz \
+# --process gg_X_ZZbbtautau \
+# --maxEvents 1000 --nJobs 200 --start_from 0 --queue reserv \
+# --base /data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/gg_X_ZZbbtautau_M800
+# python3 batchSubmitterMC_all.py \
+# --grid /data_CMS/cms/vernazza/MCProduction/2023_11_14/MyPrivateGridpacks/GridpacksZZ/gg_H_quark-mass-effects_slc7_amd64_gcc700_CMSSW_10_6_37_my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M900.tgz \
+# --process gg_X_ZZbbtautau \
+# --maxEvents 1000 --nJobs 200 --start_from 0 --queue reserv \
+# --base /data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/gg_X_ZZbbtautau_M900
+# python3 batchSubmitterMC_all.py \
+# --grid /data_CMS/cms/vernazza/MCProduction/2023_11_14/MyPrivateGridpacks/GridpacksZZ/gg_H_quark-mass-effects_slc7_amd64_gcc700_CMSSW_10_6_37_my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1000.tgz \
+# --process gg_X_ZZbbtautau \
+# --maxEvents 1000 --nJobs 200 --start_from 0 --queue reserv \
+# --base /data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/gg_X_ZZbbtautau_M1000
+# python3 batchSubmitterMC_all.py \
+# --grid /data_CMS/cms/vernazza/MCProduction/2023_11_14/MyPrivateGridpacks/GridpacksZZ/gg_H_quark-mass-effects_slc7_amd64_gcc700_CMSSW_10_6_37_my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1100.tgz \
+# --process gg_X_ZZbbtautau \
+# --maxEvents 1000 --nJobs 200 --start_from 0 --queue long \
+# --base /data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/gg_X_ZZbbtautau_M1100
+# python3 batchSubmitterMC_all.py \
+# --grid /data_CMS/cms/vernazza/MCProduction/2023_11_14/MyPrivateGridpacks/GridpacksZZ/gg_H_quark-mass-effects_slc7_amd64_gcc700_CMSSW_10_6_37_my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1200.tgz \
+# --process gg_X_ZZbbtautau \
+# --maxEvents 1000 --nJobs 200 --start_from 0 --queue long \
+# --base /data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/gg_X_ZZbbtautau_M1200
+# python3 batchSubmitterMC_all.py \
+# --grid /data_CMS/cms/vernazza/MCProduction/2023_11_14/MyPrivateGridpacks/GridpacksZZ/gg_H_quark-mass-effects_slc7_amd64_gcc700_CMSSW_10_6_37_my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1300.tgz \
+# --process gg_X_ZZbbtautau \
+# --maxEvents 1000 --nJobs 200 --start_from 0 --queue long \
+# --base /data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/gg_X_ZZbbtautau_M1300
+# python3 batchSubmitterMC_all.py \
+# --grid /data_CMS/cms/vernazza/MCProduction/2023_11_14/MyPrivateGridpacks/GridpacksZZ/gg_H_quark-mass-effects_slc7_amd64_gcc700_CMSSW_10_6_37_my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1400.tgz \
+# --process gg_X_ZZbbtautau \
+# --maxEvents 1000 --nJobs 200 --start_from 0 --queue long \
+# --base /data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/gg_X_ZZbbtautau_M1400
+# python3 batchSubmitterMC_all.py \
+# --grid /data_CMS/cms/vernazza/MCProduction/2023_11_14/MyPrivateGridpacks/GridpacksZZ/gg_H_quark-mass-effects_slc7_amd64_gcc700_CMSSW_10_6_37_my_gg_X_ZZbbtautau_quark-mass-effects_NNPDF31_13TeV_M1500.tgz \
+# --process gg_X_ZZbbtautau \
+# --maxEvents 1000 --nJobs 200 --start_from 0 --queue long \
+# --base /data_CMS/cms/vernazza/MCProduction/2023_11_14/OutputSamples/gg_X_ZZbbtautau_M1500
 
 ####################################################################################################################################
 ####################################################################################################################################
